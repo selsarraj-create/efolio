@@ -1,0 +1,29 @@
+{
+    "personalInfo": {
+        "name": "Model Name",
+        "email": "contact@example.com",
+        "copyrightYear": 2026,
+        "bio": "Professional model based in New York City, available for fashion, commercial, and runway work."
+    },
+    "stats": {
+        "height": "178cm",
+        "bust": "86cm",
+        "waist": "61cm",
+        "hips": "89cm",
+        "shoes": "39",
+        "eyes": "Blue",
+        "hair": "Blonde"
+    },
+    "images": {
+        "profile": "/uploads/profile.png",
+        "hero": "/uploads/hero.png",
+        "portfolio": [
+            "/uploads/portfolio-1.png",
+            "/uploads/portfolio-2.png",
+            "/uploads/portfolio-3.png",
+            "/uploads/portfolio-4.png",
+            "/uploads/portfolio-5.png",
+            "/uploads/portfolio-6.png"
+        ]
+    }
+}
