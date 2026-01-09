@@ -8,11 +8,18 @@ export default function AdminDashboard() {
     const [config, setConfig] = useState<ModelConfig | null>(null);
     const [saving, setSaving] = useState(false);
     const [activeTab, setActiveTab] = useState<"info" | "stats" | "images">("info");
+    const [storageMode, setStorageMode] = useState<string>('loading');
 
     useEffect(() => {
         fetch("/api/config")
             .then((res) => res.json())
-            .then((data) => setConfig(data));
+            .then((data) => {
+                if (data._storage) {
+                    setStorageMode(data._storage);
+                    delete data._storage;
+                }
+                setConfig(data);
+            });
     }, []);
 
     if (!config) return <div className="p-8 text-center">Loading...</div>;
@@ -92,7 +99,12 @@ export default function AdminDashboard() {
         <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 p-8">
             <div className="max-w-4xl mx-auto bg-white dark:bg-neutral-800 shadow-xl rounded-lg overflow-hidden">
                 <div className="bg-neutral-900 dark:bg-black text-white p-6 flex justify-between items-center">
-                    <h1 className="font-serif text-2xl tracking-widest uppercase">Admin Dashboard</h1>
+                    <div className="flex items-center gap-4">
+                        <h1 className="font-serif text-2xl tracking-widest uppercase">Admin Dashboard</h1>
+                        <span className={`text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider ${storageMode.includes('kv') ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
+                            Storage: {storageMode}
+                        </span>
+                    </div>
                     <button
                         onClick={handleSave}
                         disabled={saving}

@@ -9,13 +9,18 @@ export async function GET() {
     try {
         if (process.env.KV_REST_API_URL) {
             const data = await kv.get('model-config');
-            if (data) return NextResponse.json(data);
+            if (data) return NextResponse.json({ ...data as object, _storage: 'kv' });
+            // If KV is empty, fall back to file but mark as KV-ready
+            // We want to return the file content but indicate that we are in KV mode so writes will go to KV
         }
 
-        // Fallback to local file if KV is empty or not configured
+        // Fallback to local file
         const fileContents = await fs.readFile(configPath, 'utf8');
         const data = JSON.parse(fileContents);
-        return NextResponse.json(data);
+        return NextResponse.json({
+            ...data,
+            _storage: process.env.KV_REST_API_URL ? 'kv-migrating' : 'fs'
+        });
     } catch {
         return NextResponse.json({ error: 'Failed to read config' }, { status: 500 });
     }
