@@ -1,9 +1,20 @@
-import Image from "next/image";
 import Link from "next/link";
-import modelConfig from "@/data/model-config.json";
+import Image from "next/image";
+import { ModelConfig } from "@/types";
+import { headers } from "next/headers";
 
-export default function Home() {
-  const { images, personalInfo } = modelConfig;
+async function getConfig(): Promise<ModelConfig> {
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const res = await fetch(`${protocol}://${host}/api/config`, { cache: "no-store", next: { tags: ['config'] } });
+  if (!res.ok) throw new Error("Failed to load config");
+  return res.json();
+}
+
+export default async function Home() {
+  const config = await getConfig();
+  const { images, personalInfo } = config;
 
   return (
     <div className="relative w-full h-screen">

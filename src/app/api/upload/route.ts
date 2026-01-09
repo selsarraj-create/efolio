@@ -39,8 +39,8 @@ export async function POST(request: Request) {
         await fs.writeFile(filePath, buffer);
 
         return NextResponse.json({ url: `/uploads/${filename}` });
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
-        return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+        return NextResponse.json({ error: 'Upload failed: ' + (error.message || String(error)) }, { status: 500 });
     }
 }

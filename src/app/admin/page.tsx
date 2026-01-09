@@ -27,13 +27,15 @@ export default function AdminDashboard() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await fetch("/api/config", {
+            const res = await fetch("/api/config", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(config),
             });
+            if (!res.ok) throw new Error('Failed to save');
             alert("Configuration saved!");
-        } catch {
+        } catch (e) {
+            console.error(e);
             alert("Failed to save configuration.");
         } finally {
             setSaving(false);
@@ -79,6 +81,8 @@ export default function AdminDashboard() {
                 }
 
                 setConfig({ ...config, images: newImages });
+            } else if (data.error) {
+                alert(data.error);
             }
         } catch (error) {
             console.error(error);

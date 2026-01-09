@@ -3,6 +3,8 @@ import path from 'path';
 import { NextResponse } from 'next/server';
 import redis from '@/lib/redis';
 
+export const dynamic = 'force-dynamic';
+
 const configPath = path.join(process.cwd(), 'src', 'data', 'model-config.json');
 
 export async function GET() {
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
     try {
         const data = await request.json();
 
-        if (process.env.KV_REST_API_URL && redis) {
+        if (process.env.REDIS_URL && redis) {
             // Remove any storage metadata before saving
             const dataToSave = { ...data };
             delete dataToSave._storage;
