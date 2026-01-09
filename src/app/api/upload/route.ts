@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 
 export async function POST(request: Request) {
     try {
@@ -12,6 +13,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
         }
 
+        // Cloud Storage (Vercel Blob)
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+            const filename = `${type}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+            const blob = await put(filename, file, {
+                access: 'public',
+            });
+            return NextResponse.json({ url: blob.url });
+        }
+
+        // Local Storage
         const buffer = Buffer.from(await file.arrayBuffer());
         const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 
