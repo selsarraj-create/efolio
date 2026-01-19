@@ -1,19 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ModelConfig } from "@/types";
-import { headers } from "next/headers";
+import { getClientConfig } from "@/lib/client-config";
+import { notFound } from "next/navigation";
+import { cookies } from 'next/headers';
 
-async function getConfig(): Promise<ModelConfig> {
-  const headersList = await headers();
-  const host = headersList.get("host");
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const res = await fetch(`${protocol}://${host}/api/config`, { cache: "no-store", next: { tags: ['config'] } });
-  if (!res.ok) throw new Error("Failed to load config");
-  return res.json();
-}
+export const dynamic = 'force-dynamic';
 
-export default async function Home() {
-  const config = await getConfig();
+export default async function ClientHome({ params }: { params: Promise<{ client: string }> }) {
+  const { client } = await params;
+  await cookies(); // Force dynamic rendering
+
+  // Fetch fully merged client config
+  const config = await getClientConfig(client);
+
+  if (!config) {
+    notFound();
+  }
+
   const { images, personalInfo } = config;
 
   return (
@@ -30,6 +33,9 @@ export default async function Home() {
       </div>
 
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-white">
+        {/* Optional: Show Lead Code if it exists in config (requires custom field in logic) */}
+        {/* For now keeping it simple to match main site design */}
+
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-widest uppercase text-center mb-8 drop-shadow-lg">
           {personalInfo.name}
         </h1>

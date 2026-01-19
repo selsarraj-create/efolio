@@ -3,26 +3,45 @@
 import React, { useState } from "react";
 import { ModelConfig } from "@/types";
 
-export default function ContactForm({ personalInfo }: { personalInfo: ModelConfig['personalInfo'] }) {
+export default function ContactForm({ personalInfo, clientSlug }: { personalInfo: ModelConfig['personalInfo'], clientSlug?: string }) {
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setStatus("submitting");
 
-        // For template purposes, we'll simulate a submission.
-        setTimeout(() => {
-            // Construct mailto link as a fallback/simple method
-            const form = e.currentTarget;
-            const formData = new FormData(form);
-            const name = formData.get("name");
-            const subject = formData.get("subject");
-            const message = formData.get("message");
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const data = {
+            clientSlug: clientSlug || 'main',
+            name: formData.get("name"),
+            email: formData.get("email"),
+            subject: formData.get("subject"),
+            message: formData.get("message"),
+        };
 
-            window.location.href = `mailto:${personalInfo.email}?subject=${encodeURIComponent(`Portfolio Inquiry: ${subject}`)}&body=${encodeURIComponent(`From: ${name}\n\n${message}`)}`;
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-            setStatus("success");
-        }, 1000);
+            if (response.ok) {
+                setStatus("success");
+                form.reset();
+            } else {
+                const errorData = await response.json();
+                console.error("Submission failed:", errorData);
+                alert(`Error: ${errorData.error || "Unknown error"}`);
+                setStatus("error");
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus("error");
+        }
     };
 
     return (
@@ -101,7 +120,12 @@ export default function ContactForm({ personalInfo }: { personalInfo: ModelConfi
 
                     {status === "success" && (
                         <p className="text-green-600 text-center text-sm mt-4 tracking-wide">
-                            Thank you! Your email client should open shortly.
+                            Message sent successfully! We'll get back to you soon.
+                        </p>
+                    )}
+                    {status === "error" && (
+                        <p className="text-red-600 text-center text-sm mt-4 tracking-wide">
+                            Something went wrong. Please try again later.
                         </p>
                     )}
                 </form>

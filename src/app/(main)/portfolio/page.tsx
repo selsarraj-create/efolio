@@ -1,20 +1,11 @@
 import React from "react";
-
 import PortfolioGrid from "./PortfolioGrid";
-import { ModelConfig } from "@/types";
-import { headers } from "next/headers";
+import { getModelConfig } from "@/lib/config";
 
-async function getConfig(): Promise<ModelConfig> {
-    const headersList = await headers();
-    const host = headersList.get("host");
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    const res = await fetch(`${protocol}://${host}/api/config`, { cache: "no-store", next: { tags: ['config'] } });
-    if (!res.ok) throw new Error("Failed to load config");
-    return res.json();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function Portfolio() {
-    const config = await getConfig();
+    const config = await getModelConfig();
     const { images } = config;
 
     return (

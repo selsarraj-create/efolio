@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import modelConfig from "@/data/model-config.json";
+import { getModelConfig } from "@/lib/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,10 +13,13 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-export const metadata: Metadata = {
-  title: `${modelConfig.personalInfo.name} - Model Portfolio`,
-  description: modelConfig.personalInfo.bio,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getModelConfig();
+  return {
+    title: `${config.personalInfo.name} - Model Portfolio`,
+    description: config.personalInfo.bio,
+  };
+}
 
 export default function RootLayout({
   children,
@@ -29,12 +31,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} antialiased`}
       >
-        <div className="flex min-h-screen flex-col md:flex-row">
-          <Sidebar />
-          <main className="flex-1 md:ml-64 min-h-screen relative pt-16 md:pt-0">
-            {children}
-          </main>
-        </div>
+        {children}
       </body>
     </html>
   );

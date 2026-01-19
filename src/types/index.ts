@@ -25,4 +25,7 @@ export interface ModelConfig {
     personalInfo: PersonalInfo;
     stats: ModelStats;
     images: ModelImages;
+    password?: string;
+    _siteId?: string;
+    _storage?: string;
 }

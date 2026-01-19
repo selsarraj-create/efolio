@@ -1,46 +1,46 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
+    const body = (await request.json()) as HandleUploadBody;
+
     try {
-        const formData = await request.formData();
-        const file = formData.get('file') as File;
-        const type = formData.get('type') as string; // 'profile', 'hero', 'portfolio'
+        const token = process.env.BLOB_READ_WRITE_TOKEN;
+        console.log("Upload Request initiated. Token present:", !!token);
 
-        if (!file) {
-            return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+        if (!token) {
+            throw new Error("Missing BLOB_READ_WRITE_TOKEN on server.");
         }
 
-        // Cloud Storage (Vercel Blob)
-        if (process.env.BLOB_READ_WRITE_TOKEN) {
-            const filename = `${type}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-            const blob = await put(filename, file, {
-                access: 'public',
-            });
-            return NextResponse.json({ url: blob.url });
-        }
+        const jsonResponse = await handleUpload({
+            body,
+            request,
+            token, // Explicitly pass token to avoid auto-lookup issues
+            // Allow uploads from the current site (Site B) even though the token is from Site A
+            // @ts-expect-error - allowedOrigins is supported by runtime but missing from types
+            allowedOrigins: ['*'], // Wildcard to rule out any matching issues
+            onBeforeGenerateToken: async (pathname, clientPayload) => {
+                console.log("Generating token for:", pathname);
+                // You can add authentication/validation here
+                // For now, we allow the upload (Admin page is protected by obscurity/auth if added later)
+                return {
+                    allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                    tokenPayload: JSON.stringify({
+                        // optional payload to pass to onUploadCompleted
+                    }),
+                };
+            },
+            onUploadCompleted: async ({ blob, tokenPayload }) => {
+                console.log('Blob upload completed', blob, tokenPayload);
+            },
+        });
 
-        // Local Storage
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-
-        // Ensure upload dir exists
-        try {
-            await fs.access(uploadDir);
-        } catch {
-            await fs.mkdir(uploadDir, { recursive: true });
-        }
-
-        const filename = `${type}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-        const filePath = path.join(uploadDir, filename);
-
-        await fs.writeFile(filePath, buffer);
-
-        return NextResponse.json({ url: `/uploads/${filename}` });
-    } catch (error: any) {
-        console.error(error);
-        return NextResponse.json({ error: 'Upload failed: ' + (error.message || String(error)) }, { status: 500 });
+        return NextResponse.json(jsonResponse);
+    } catch (error) {
+        console.error('HandleUpload Error:', error);
+        return NextResponse.json(
+            { error: (error as Error).message },
+            { status: 400 }, // The webhook will retry 5 times if you return 500
+        );
     }
 }

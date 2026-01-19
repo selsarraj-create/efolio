@@ -4,12 +4,17 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import modelConfig from "@/data/model-config.json";
 
-export default function Sidebar() {
+import { ModelConfig } from "@/types";
+
+interface SidebarProps {
+    config: ModelConfig;
+}
+
+export default function Sidebar({ config }: SidebarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
-    const { personalInfo, stats, images } = modelConfig;
+    const { personalInfo, stats, images } = config;
 
     const navItems = [
         { label: "Home", href: "/" },
@@ -61,8 +66,8 @@ export default function Sidebar() {
                                             href={item.href}
                                             onClick={() => setIsOpen(false)}
                                             className={`text-sm tracking-widest uppercase transition-colors hover:text-gold-500 ${pathname === item.href
-                                                    ? "text-gold-500 font-medium"
-                                                    : "text-neutral-500 dark:text-neutral-400"
+                                                ? "text-gold-500 font-medium"
+                                                : "text-neutral-500 dark:text-neutral-400"
                                                 }`}
                                         >
                                             {item.label}
