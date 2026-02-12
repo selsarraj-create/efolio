@@ -15,21 +15,23 @@ export default function PortfolioGrid({ images }: PortfolioGridProps) {
 
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="masonry-grid">
                 {images.map((src, i) => (
                     <div
                         key={i}
-                        className="relative aspect-[3/4] cursor-pointer group overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                        className="masonry-item cursor-pointer"
+                        style={{ animationDelay: `${i * 60}ms` }}
                         onClick={() => setIndex(i)}
                     >
                         <Image
                             src={src}
                             alt={`Portfolio image ${i + 1}`}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            width={800}
+                            height={1000}
+                            className="w-full h-auto"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                        <div className="masonry-overlay" />
                     </div>
                 ))}
             </div>
