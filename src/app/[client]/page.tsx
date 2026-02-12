@@ -10,7 +10,6 @@ export default async function ClientHome({ params }: { params: Promise<{ client:
   const { client } = await params;
   await cookies(); // Force dynamic rendering
 
-  // Fetch fully merged client config
   const config = await getClientConfig(client);
 
   if (!config) {
@@ -47,8 +46,8 @@ export default async function ClientHome({ params }: { params: Promise<{ client:
           </div>
         </div>
 
-        {/* Desktop: split-screen */}
-        <div className="hidden md:flex h-screen">
+        {/* Desktop: split-screen, covers full viewport over sidebar */}
+        <div className="hidden md:flex fixed inset-0 z-50 h-screen">
           <div className="w-1/2 bg-neutral-950 flex flex-col items-center justify-center px-12">
             <h1 className="font-serif text-6xl lg:text-8xl tracking-widest uppercase text-white text-center mb-10 leading-tight">
               {personalInfo.name}
