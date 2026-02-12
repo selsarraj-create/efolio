@@ -32,6 +32,7 @@ export interface ModelConfig {
     stats: ModelStats;
     images: ModelImages;
     socialLinks?: SocialLinks;
+    heroOrientation?: 'portrait' | 'landscape';
     password?: string;
     _siteId?: string;
     _storage?: string;

@@ -130,6 +130,7 @@ export default function AdminDashboard() {
 
             if (newBlob.url) {
                 const newImages = { ...config.images };
+                let updatedConfig = { ...config };
 
                 if (type === "portfolio" && typeof index === "number") {
                     newImages.portfolio[index] = newBlob.url;
@@ -140,17 +141,34 @@ export default function AdminDashboard() {
                     newImages[type] = newBlob.url;
                 }
 
-                setConfig({ ...config, images: newImages });
+                updatedConfig = { ...updatedConfig, images: newImages };
 
-                try {
-                    await fetch("/api/config", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ ...config, images: newImages }),
-                    });
-                } catch (saveError) {
-                    console.error("Auto-save failed:", saveError);
-                    alert("Image uploaded, but failed to auto-save config. Please click 'Save Changes'.");
+                // Auto-detect hero orientation
+                if (type === "hero") {
+                    const img = new window.Image();
+                    img.onload = () => {
+                        const orientation = img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait';
+                        const configWithOrientation = { ...updatedConfig, heroOrientation: orientation };
+                        setConfig(configWithOrientation);
+                        fetch("/api/config", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(configWithOrientation),
+                        }).catch(err => console.error("Auto-save failed:", err));
+                    };
+                    img.src = newBlob.url;
+                } else {
+                    setConfig(updatedConfig);
+                    try {
+                        await fetch("/api/config", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(updatedConfig),
+                        });
+                    } catch (saveError) {
+                        console.error("Auto-save failed:", saveError);
+                        alert("Image uploaded, but failed to auto-save config. Please click 'Save Changes'.");
+                    }
                 }
             }
         } catch (error: any) {

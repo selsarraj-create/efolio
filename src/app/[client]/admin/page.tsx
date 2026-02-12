@@ -164,6 +164,16 @@ export default function AdminDashboard() {
                     return { ...prevConfig, images: finalImages };
                 });
 
+                // Auto-detect hero orientation
+                if (type === "hero") {
+                    const img = new window.Image();
+                    img.onload = () => {
+                        const orientation = img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait';
+                        setConfig((prevConfig: any) => ({ ...prevConfig, heroOrientation: orientation }));
+                    };
+                    img.src = newBlob.url;
+                }
+
                 // REMOVED AUTO-SAVE here to allow batch updates
             }
         } catch (error: any) {
