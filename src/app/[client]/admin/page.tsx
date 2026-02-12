@@ -95,6 +95,13 @@ export default function AdminDashboard() {
         });
     };
 
+    const handleSocialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfig({
+            ...config,
+            socialLinks: { ...(config.socialLinks || {}), [e.target.name]: e.target.value },
+        });
+    };
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string, index?: number) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -314,6 +321,45 @@ export default function AdminDashboard() {
                                     className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded bg-transparent"
                                 />
                             </div>
+
+                            <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+                                <h3 className="text-sm font-bold uppercase text-neutral-500 mb-4">Social Media</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-neutral-500 mb-2">Instagram URL</label>
+                                        <input
+                                            type="url"
+                                            name="instagram"
+                                            placeholder="https://instagram.com/..."
+                                            value={config.socialLinks?.instagram || ''}
+                                            onChange={handleSocialChange}
+                                            className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded bg-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-neutral-500 mb-2">TikTok URL</label>
+                                        <input
+                                            type="url"
+                                            name="tiktok"
+                                            placeholder="https://tiktok.com/@..."
+                                            value={config.socialLinks?.tiktok || ''}
+                                            onChange={handleSocialChange}
+                                            className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded bg-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-neutral-500 mb-2">Facebook URL</label>
+                                        <input
+                                            type="url"
+                                            name="facebook"
+                                            placeholder="https://facebook.com/..."
+                                            value={config.socialLinks?.facebook || ''}
+                                            onChange={handleSocialChange}
+                                            className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded bg-transparent"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -383,6 +429,6 @@ export default function AdminDashboard() {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

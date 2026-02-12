@@ -21,10 +21,17 @@ export interface ModelImages {
     portfolio: string[];
 }
 
+export interface SocialLinks {
+    instagram?: string;
+    tiktok?: string;
+    facebook?: string;
+}
+
 export interface ModelConfig {
     personalInfo: PersonalInfo;
     stats: ModelStats;
     images: ModelImages;
+    socialLinks?: SocialLinks;
     password?: string;
     _siteId?: string;
     _storage?: string;

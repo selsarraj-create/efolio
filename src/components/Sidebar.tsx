@@ -83,8 +83,37 @@ export default function Sidebar({ config }: SidebarProps) {
                             </ul>
                         </nav>
 
+                        {/* Social Links */}
+                        {config.socialLinks && (config.socialLinks.instagram || config.socialLinks.tiktok || config.socialLinks.facebook) && (
+                            <div className="mt-auto mb-6 flex justify-center md:justify-start gap-4">
+                                {config.socialLinks.instagram && (
+                                    <a href={config.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-gold-500 transition-colors" aria-label="Instagram">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                                        </svg>
+                                    </a>
+                                )}
+                                {config.socialLinks.tiktok && (
+                                    <a href={config.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-gold-500 transition-colors" aria-label="TikTok">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.51a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V9.05a8.27 8.27 0 0 0 4.76 1.5V7.12a4.83 4.83 0 0 1-1-.43z" />
+                                        </svg>
+                                    </a>
+                                )}
+                                {config.socialLinks.facebook && (
+                                    <a href={config.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-gold-500 transition-colors" aria-label="Facebook">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                                        </svg>
+                                    </a>
+                                )}
+                            </div>
+                        )}
+
                         {/* Stats */}
-                        <div className="mt-auto">
+                        <div className={`${!(config.socialLinks && (config.socialLinks.instagram || config.socialLinks.tiktok || config.socialLinks.facebook)) ? 'mt-auto' : ''}`}>
                             {/* <h2 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-50">Measurements</h2> */}
                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                                 <div>Height</div>
