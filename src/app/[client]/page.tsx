@@ -21,12 +21,12 @@ export default async function ClientHome({ params }: { params: Promise<{ client:
 
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bg-black">
         <Image
           src={images.hero}
           alt={`${personalInfo.name} - Fashion Model`}
           fill
-          className="object-cover object-center"
+          className="object-cover md:object-contain object-center"
           priority
         />
         <div className="absolute inset-0 bg-black/20" />
