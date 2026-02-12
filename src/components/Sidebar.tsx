@@ -114,7 +114,7 @@ export default function Sidebar({ config }: SidebarProps) {
 
                         {/* Stats */}
                         <div className={`${!(config.socialLinks && (config.socialLinks.instagram || config.socialLinks.tiktok || config.socialLinks.facebook)) ? 'mt-auto' : ''}`}>
-                            {/* <h2 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-50">Measurements</h2> */}
+                            <h2 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-50">Statistics</h2>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                                 <div>Height</div>
                                 <div className="text-right text-neutral-900 dark:text-white">{stats.height}</div>
