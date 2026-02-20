@@ -64,12 +64,12 @@ export default async function ClientHome({ params }: { params: Promise<{ client:
               View Portfolio
             </Link>
           </div>
-          <div className="w-1/2 relative">
+          <div className="w-1/2 relative bg-neutral-950">
             <Image
               src={images.hero}
               alt={`${personalInfo.name} - Fashion Model`}
               fill
-              className="object-cover object-center"
+              className="object-contain object-center"
               priority
             />
           </div>
