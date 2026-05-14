@@ -157,6 +157,27 @@ function ClientList() {
         }
     };
 
+    const handleResetPassword = async (slug: string, name: string) => {
+        const newPassword = window.prompt(`Enter new password for ${name}:`);
+        if (!newPassword) return;
+
+        try {
+            const res = await fetch('/api/admin/update-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slug, newPassword }),
+            });
+
+            if (res.ok) {
+                alert(`Password for ${name} has been reset.`);
+            } else {
+                alert('Failed to reset password.');
+            }
+        } catch (err) {
+            alert('Error resetting password.');
+        }
+    };
+
     if (loading) return <p style={{ marginTop: '30px', textAlign: 'center', fontSize: '13px', color: '#888' }}>Loading existing sites...</p>;
 
     if (clients.length === 0) return null;
@@ -175,19 +196,34 @@ function ClientList() {
                         >
                             {client.name} <span style={{ color: '#999', fontSize: '12px' }}>↗</span>
                         </a>
-                        <button
-                            onClick={() => handleDelete(client.slug, client.name)}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#e53e3e',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                padding: '4px 8px',
-                            }}
-                        >
-                            Delete
-                        </button>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                            <button
+                                onClick={() => handleResetPassword(client.slug, client.name)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#0070f3',
+                                    fontSize: '12px',
+                                    cursor: 'pointer',
+                                    padding: '4px 8px',
+                                }}
+                            >
+                                Reset PW
+                            </button>
+                            <button
+                                onClick={() => handleDelete(client.slug, client.name)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#e53e3e',
+                                    fontSize: '12px',
+                                    cursor: 'pointer',
+                                    padding: '4px 8px',
+                                }}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>
